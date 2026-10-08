@@ -1,6 +1,7 @@
 import { event, pillars, speakers, schedule, experienceThemes } from './event-data.js';
 import { getCountdown } from './countdown.js';
 import { initSpotlight } from './spotlight.js';
+import { setPressedChoice } from './selection.js';
 
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -10,7 +11,7 @@ function renderPillars() {
   const container = document.querySelector('[data-pillars]');
   if (!container) return;
   container.innerHTML = pillars.map((pillar) => `
-    <article class="pillar-card pillar-${escapeHtml(pillar.tone)} reveal" data-spotlight tabindex="0">
+    <article class="pillar-card pillar-${escapeHtml(pillar.tone)} reveal" data-spotlight data-choice tabindex="0" role="button" aria-pressed="false">
       <div class="pillar-top"><span>${escapeHtml(pillar.number)}</span><span class="pillar-mark" aria-hidden="true">${escapeHtml(pillar.mark)}</span></div>
       <div class="pillar-bottom"><h3>${escapeHtml(pillar.title)}</h3><p>${escapeHtml(pillar.description)}</p><span class="pillar-arrow" aria-hidden="true">↗</span></div>
     </article>`).join('');
@@ -85,6 +86,7 @@ function initNavigation() {
     toggle?.setAttribute('aria-label', 'Open navigation menu');
     menu?.classList.remove('is-open');
     document.body.classList.remove('menu-open');
+    toggle?.focus({ preventScroll: true });
   };
 
   toggle?.addEventListener('click', () => {
@@ -95,11 +97,30 @@ function initNavigation() {
     document.body.classList.toggle('menu-open', !isOpen);
   });
   menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
-  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeMenu(); });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') closeMenu();
+  });
 
   const setHeaderState = () => header?.classList.toggle('is-scrolled', window.scrollY > 18);
   setHeaderState();
   window.addEventListener('scroll', setHeaderState, { passive: true });
+}
+
+function initSelectableCards() {
+  document.querySelectorAll('[data-select-group]').forEach((group) => {
+    const choices = [...group.querySelectorAll('[data-choice]')];
+    group.addEventListener('click', (event) => {
+      const selected = event.target.closest('[data-choice]');
+      if (selected && group.contains(selected)) setPressedChoice(choices, selected);
+    });
+    group.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const selected = event.target.closest('[data-choice]');
+      if (!selected || !group.contains(selected)) return;
+      event.preventDefault();
+      setPressedChoice(choices, selected);
+    });
+  });
 }
 
 function initReveal() {
@@ -132,6 +153,7 @@ renderExperiences();
 renderSpeakers();
 renderSchedule();
 initNavigation();
+initSelectableCards();
 initCountdown();
 initReveal();
 initSpotlight();

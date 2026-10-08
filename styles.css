@@ -241,6 +241,10 @@ button { font: inherit; }
   .reveal { opacity: 1; transform: none; transition-delay: 0ms !important; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .pathway-step { transition: none; }
+}
+
 @media (max-width: 1000px) {
   .page-wrap { width: min(var(--wrap), calc(100% - 64px)); }
   .nav-shell { width: calc(100% - 52px); }
@@ -735,4 +739,121 @@ button { font: inherit; }
   .experience-cross {
     transition: none;
   }
+}
+
+/* Responsive interaction and layout refinements. */
+.pillar-card[aria-pressed="true"] {
+  transform: translate(-2px, -2px);
+  border-color: var(--accent);
+  box-shadow: 4px 4px 0 var(--accent);
+}
+.pillar-card:focus-visible,
+.pathway-step:focus-visible { outline-offset: 4px; }
+.degree-pathway {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+.pathway-step {
+  position: relative;
+  min-width: 0;
+  min-height: 54px;
+  padding: 9px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--ink);
+  background: rgba(250,249,246,.72);
+  text-align: left;
+  cursor: pointer;
+  transition: color .2s, background .2s, border-color .2s, transform .2s, box-shadow .2s;
+}
+.pathway-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -11px;
+  width: 10px;
+  height: 1px;
+  background: var(--line);
+}
+.pathway-step > span { font: 700 10px var(--display); text-transform: uppercase; }
+.pathway-step small { color: var(--muted); font-size: 8px; line-height: 1.35; }
+.pathway-step:hover,
+.pathway-step[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: #fff;
+  background: var(--accent);
+  box-shadow: 2px 2px 0 var(--ink);
+  transform: translate(-1px, -1px);
+}
+.pathway-step:hover small,
+.pathway-step[aria-pressed="true"] small { color: rgba(255,255,255,.82); }
+.pathway-step:active { transform: translateY(1px); box-shadow: none; }
+
+@media (min-width: 701px) and (max-width: 900px) {
+  .nav-links { gap: clamp(10px, 1.5vw, 14px); }
+  .hero-layout { gap: clamp(24px, 4vw, 38px); }
+  .hero-poster { min-height: 340px; }
+}
+
+@media (max-width: 700px) {
+  .degree-pathway {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    max-width: 440px;
+  }
+  .pathway-step {
+    min-height: 48px;
+    padding: 9px 13px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pathway-step > span { font-size: 10px; }
+  .pathway-step small { font-size: 9px; text-align: right; }
+  .pathway-step:not(:last-child)::after {
+    top: auto;
+    right: auto;
+    bottom: -9px;
+    left: 17px;
+    width: 1px;
+    height: 8px;
+  }
+  .hero-meta { gap: 12px; }
+  .hero-meta > span:first-child { min-width: 0; }
+  .hero-meta > span:last-child { flex: 0 0 auto; }
+  .hero-title { font-size: clamp(68px, 19vw, 104px); }
+  .hero-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero-facts strong { overflow-wrap: anywhere; }
+  .countdown-clock { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .time-unit, .time-unit:first-child { min-width: 0; padding: 10px 5px 8px; align-items: center; text-align: center; }
+  .time-value { font-size: clamp(24px, 7.8vw, 34px); }
+  .time-label { letter-spacing: .04em; }
+  .organizer-names { align-items: flex-start; }
+  .organizer-names > span { min-width: 0; overflow-wrap: anywhere; }
+  .footer-main { grid-template-columns: 1fr; gap: 16px; }
+  .footer-wordmark { grid-column: auto; }
+  .reveal { transition-duration: .45s; }
+  .hero-orbit, .hero-orbit-two, .poster-orbit { animation-duration: 70s; }
+}
+
+@media (max-width: 400px) {
+  .hero-meta { font-size: 6px; letter-spacing: .025em; }
+  .hero-meta > span:first-child { gap: 7px; }
+  .hero-facts { gap: 12px 8px; }
+  .hero-facts strong { font-size: 7.5px; }
+  .countdown-clock { gap: 4px; }
+  .time-value { font-size: 24px; }
+  .time-label { font-size: 6px; }
+  .schedule-date { align-items: flex-start; flex-wrap: wrap; }
+  .footer-bottom { overflow-wrap: anywhere; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pathway-step { transition: none; }
 }

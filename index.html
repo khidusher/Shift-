@@ -110,7 +110,7 @@
       <section class="pillars-section section-pad" id="pillars" aria-labelledby="pillars-title">
         <div class="page-wrap">
           <div class="section-heading reveal"><div><p class="eyebrow">Beyond the degree</p><h2 class="display-heading" id="pillars-title">Three ways to<br /><span>think forward.</span></h2></div><p class="section-aside">A wider view of what a meaningful life can hold.</p></div>
-          <div class="pillar-grid" data-pillars data-reveal-stagger></div>
+          <div class="pillar-grid" data-pillars data-select-group data-reveal-stagger></div>
         </div>
       </section>
 
@@ -119,7 +119,14 @@
         <div class="page-wrap degree-content reveal">
           <p class="eyebrow"><span>02</span> &nbsp; THE QUESTION</p>
           <h2 id="degree-title">A degree matters.<br /><em>And so does everything you do with it.</em></h2>
-          <div class="degree-questions"><span>Who you become</span><span>What you build</span><span>How you lead</span><span>Who you impact</span><span>What legacy you leave</span></div>
+          <div class="degree-pathway" data-select-group role="group" aria-label="Beyond the degree pathway">
+            <button type="button" class="pathway-step" data-choice aria-pressed="false"><span>Degree</span><small>Who you become</small></button>
+            <button type="button" class="pathway-step" data-choice aria-pressed="false"><span>Career</span><small>What you build</small></button>
+            <button type="button" class="pathway-step" data-choice aria-pressed="false"><span>Purpose</span><small>Faith and direction</small></button>
+            <button type="button" class="pathway-step" data-choice aria-pressed="false"><span>Leadership</span><small>How you lead</small></button>
+            <button type="button" class="pathway-step" data-choice aria-pressed="false"><span>Impact</span><small>Who you impact</small></button>
+            <button type="button" class="pathway-step" data-choice aria-pressed="false"><span>Legacy</span><small>What legacy you leave</small></button>
+          </div>
         </div>
       </section>
 
