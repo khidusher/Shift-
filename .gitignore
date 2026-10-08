@@ -2,6 +2,7 @@ node_modules/
 dist/
 build/
 .next/
+.vercel/
 
 # Environment variables and local credentials
 .env
@@ -21,6 +22,10 @@ credentials/
 *.jks
 *.keystore
 *service-account*.json
+*service_account*.json
+*serviceaccount*.json
+*credentials*.json
+*credential*.json
 *firebase-adminsdk*.json
 google-services.json
 GoogleService-Info.plist

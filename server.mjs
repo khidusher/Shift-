@@ -1,39 +1,57 @@
 import { createServer } from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
-import { extname, resolve, sep } from 'node:path';
+import { readFile, realpath } from 'node:fs/promises';
+import { extname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolvePublicAsset } from './src/public-path.js';
+import { securityHeaders } from './src/security-headers.js';
 
 const root = resolve(fileURLToPath(new URL('.', import.meta.url)));
 const contentTypes = {
-  '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
+  '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.svg': 'image/svg+xml',
-  '.json': 'application/json; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8',
 };
+async function writeFileResponse(response, status, filePath, headOnly = false) {
+  const body = await readFile(filePath);
+  response.writeHead(status, {
+    ...securityHeaders,
+    'Content-Type': contentTypes[extname(filePath)] ?? 'application/octet-stream',
+    'Content-Length': body.length,
+  });
+  response.end(headOnly ? undefined : body);
+}
 
 const server = createServer(async (request, response) => {
-  const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
-  const requestedPath = pathname === '/' ? '/index.html' : pathname;
-  const filePath = resolve(root, `.${requestedPath}`);
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    request.resume();
+    response.writeHead(405, { ...securityHeaders, Allow: 'GET, HEAD', Connection: 'close' }).end('Method not allowed');
+    return;
+  }
 
-  if (filePath !== root && !filePath.startsWith(`${root}${sep}`)) {
-    response.writeHead(403).end('Forbidden');
+  let pathname;
+  try {
+    pathname = new URL(request.url, 'http://localhost').pathname;
+  } catch {
+    response.writeHead(400, securityHeaders).end('Bad request');
+    return;
+  }
+
+  const publicAsset = resolvePublicAsset(pathname);
+  if (!publicAsset) {
+    await writeFileResponse(response, 404, resolve(root, '404.html'), request.method === 'HEAD');
     return;
   }
 
   try {
-    const fileStat = await stat(filePath);
-    if (!fileStat.isFile()) throw new Error('Not a file');
-    const body = await readFile(filePath);
-    response.writeHead(200, {
-      'Content-Type': contentTypes[extname(filePath)] ?? 'application/octet-stream',
-      'X-Content-Type-Options': 'nosniff',
-      'Referrer-Policy': 'strict-origin-when-cross-origin',
-    });
-    response.end(body);
+    const requestedPath = resolve(root, publicAsset);
+    const actualPath = await realpath(requestedPath);
+    const pathFromRoot = relative(root, actualPath);
+    if (!pathFromRoot || pathFromRoot.startsWith(`..${sep}`) || pathFromRoot === '..') throw new Error('Invalid public path');
+    await writeFileResponse(response, 200, actualPath, request.method === 'HEAD');
   } catch {
-    response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('Not found');
+    await writeFileResponse(response, 404, resolve(root, '404.html'), request.method === 'HEAD');
   }
 });
 

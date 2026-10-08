@@ -2,10 +2,7 @@ import { event, pillars, speakers, schedule, experienceThemes } from './event-da
 import { getCountdown } from './countdown.js';
 import { initSpotlight } from './spotlight.js';
 import { setPressedChoice } from './selection.js';
-
-const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
-  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-}[character]));
+import { escapeHtml } from './escape-html.js';
 
 function renderPillars() {
   const container = document.querySelector('[data-pillars]');
@@ -81,24 +78,50 @@ function initNavigation() {
   const header = document.querySelector('[data-header]');
   const toggle = document.querySelector('.menu-toggle');
   const menu = document.querySelector('#primary-menu');
+  const pageContent = [document.querySelector('main'), document.querySelector('.site-footer')].filter(Boolean);
+  const menuLinks = [...(menu?.querySelectorAll('a[href]') ?? [])];
+  const firstLink = menuLinks[0];
+  const lastLink = menuLinks.at(-1);
+  const setMenuOpen = (open) => {
+    toggle?.setAttribute('aria-expanded', String(open));
+    toggle?.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    menu?.classList.toggle('is-open', open);
+    document.body.classList.toggle('menu-open', open);
+    pageContent.forEach((content) => { content.inert = open; });
+  };
   const closeMenu = () => {
-    toggle?.setAttribute('aria-expanded', 'false');
-    toggle?.setAttribute('aria-label', 'Open navigation menu');
-    menu?.classList.remove('is-open');
-    document.body.classList.remove('menu-open');
+    setMenuOpen(false);
     toggle?.focus({ preventScroll: true });
   };
 
   toggle?.addEventListener('click', () => {
     const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!isOpen));
-    toggle.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
-    menu?.classList.toggle('is-open', !isOpen);
-    document.body.classList.toggle('menu-open', !isOpen);
+    setMenuOpen(!isOpen);
+    if (!isOpen) firstLink?.focus({ preventScroll: true });
   });
   menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+  menu?.addEventListener('keydown', (event) => {
+    if (event.key !== 'Tab') return;
+    if (event.shiftKey && event.target === firstLink) {
+      event.preventDefault();
+      toggle?.focus({ preventScroll: true });
+    } else if (!event.shiftKey && event.target === lastLink) {
+      event.preventDefault();
+      toggle?.focus({ preventScroll: true });
+    }
+  });
+  toggle?.addEventListener('keydown', (event) => {
+    if (toggle.getAttribute('aria-expanded') !== 'true' || event.key !== 'Tab') return;
+    if (event.shiftKey) {
+      event.preventDefault();
+      lastLink?.focus({ preventScroll: true });
+    }
+  });
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') closeMenu();
+  });
+  window.matchMedia('(min-width: 701px)').addEventListener('change', (event) => {
+    if (event.matches && toggle?.getAttribute('aria-expanded') === 'true') closeMenu();
   });
 
   const setHeaderState = () => header?.classList.toggle('is-scrolled', window.scrollY > 18);
@@ -131,10 +154,7 @@ function initReveal() {
   }
 
   document.querySelectorAll('[data-reveal-stagger]').forEach((group) => {
-    const items = [...group.children].filter((item) => item.classList.contains('reveal'));
-    items.forEach((item, index) => {
-      item.style.transitionDelay = `${Math.min(index * 90, 360)}ms`;
-    });
+    group.classList.add('has-reveal-stagger');
   });
 
   const observer = new IntersectionObserver((entries, activeObserver) => {

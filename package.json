@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "node scripts/build.mjs",
     "dev": "node server.mjs",
     "test": "node --test",
-    "check": "node --check src/main.js && node --check src/countdown.js && node --check src/event-data.js && node --check src/spotlight.js && node --check src/selection.js"
+    "check": "node --check server.mjs && node --check scripts/build.mjs && node --check src/main.js && node --check src/countdown.js && node --check src/event-data.js && node --check src/spotlight.js && node --check src/selection.js && node --check src/escape-html.js && node --check src/public-path.js && node --check src/security-headers.js"
   }
 }
