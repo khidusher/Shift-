@@ -13,6 +13,7 @@ const publicFiles = [
   '404.html',
   'favicon.svg',
   'index.html',
+  'og-image.png',
   'privacy.html',
   'robots.txt',
   'styles.css',

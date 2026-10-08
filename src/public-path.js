@@ -8,6 +8,7 @@ const publicPages = new Map([
   ['/404.html', '404.html'],
   ['/styles.css', 'styles.css'],
   ['/favicon.svg', 'favicon.svg'],
+  ['/og-image.png', 'og-image.png'],
   ['/robots.txt', 'robots.txt'],
 ]);
 
