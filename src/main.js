@@ -108,6 +108,14 @@ function initReveal() {
     targets.forEach((target) => target.classList.add('is-visible'));
     return;
   }
+
+  document.querySelectorAll('[data-reveal-stagger]').forEach((group) => {
+    const items = [...group.children].filter((item) => item.classList.contains('reveal'));
+    items.forEach((item, index) => {
+      item.style.transitionDelay = `${Math.min(index * 90, 360)}ms`;
+    });
+  });
+
   const observer = new IntersectionObserver((entries, activeObserver) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {

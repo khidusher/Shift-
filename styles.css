@@ -686,3 +686,53 @@ button { font: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .border-trail { animation: none; }
 }
+
+.hero-poster::before,
+.poster-grid,
+.speaker-primary .placeholder-orbit {
+  transition: transform .45s cubic-bezier(.2,.8,.2,1);
+}
+.hero-poster::before,
+.poster-grid {
+  transform: translate(var(--pointer-shift-x, 0px), var(--pointer-shift-y, 0px));
+}
+.speaker-primary .placeholder-orbit { transform: translate(var(--pointer-shift-x, 0px), var(--pointer-shift-y, 0px)) rotate(-15deg); }
+.pillar-card::before {
+  transition: transform .45s cubic-bezier(.2,.8,.2,1);
+  transform: translate(var(--pointer-shift-x, 0px), var(--pointer-shift-y, 0px));
+}
+.pillar-card:hover::before,
+.pillar-card:focus-visible::before,
+.pillar-card[data-spotlight-active]::before {
+  transform: translate(var(--pointer-shift-x, 0px), var(--pointer-shift-y, 0px)) scale(1.08);
+}
+.hero-action span,
+.nav-cta span,
+.facts-link span,
+.experience-cross {
+  transition: transform .2s cubic-bezier(.2,.8,.2,1);
+}
+.hero-action:hover span,
+.nav-cta:hover span,
+.facts-link:hover span,
+.experience-row:hover .experience-cross {
+  transform: translate(3px, -3px);
+}
+.hero-action:active,
+.nav-cta:active,
+.pillar-card:active {
+  transform: translateY(1px) scale(.985);
+  box-shadow: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-poster::before,
+  .poster-grid,
+  .speaker-primary .placeholder-orbit,
+  .pillar-card::before,
+  .hero-action span,
+  .nav-cta span,
+  .facts-link span,
+  .experience-cross {
+    transition: none;
+  }
+}
