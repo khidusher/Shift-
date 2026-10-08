@@ -1,0 +1,11 @@
+{
+  "name": "shift-1-event-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "test": "node --test",
+    "check": "node --check src/main.js && node --check src/countdown.js && node --check src/event-data.js && node --check src/spotlight.js"
+  }
+}
