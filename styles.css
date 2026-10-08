@@ -213,6 +213,8 @@ button { font: inherit; }
 .footer-main p span { color: var(--muted); }
 .footer-date { justify-self: end; }
 .footer-bottom { padding-top: 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 8px; letter-spacing: .04em; text-transform: none; }
+.footer-bottom a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+.footer-bottom a:hover { color: var(--accent); }
 
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
